@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TangibleMusic.ReaderCode;
 
 namespace TangibleMusic;
 
@@ -18,6 +19,9 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
+        SimpleSerialRead simpleSerialRead = new SimpleSerialRead();
+        simpleSerialRead.SerialPortProgram();
+        
         InitializeComponent();
     }
 }
