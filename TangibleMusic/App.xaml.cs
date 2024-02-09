@@ -10,4 +10,3 @@ namespace TangibleMusic;
 public partial class App : Application
 {
 }
-
