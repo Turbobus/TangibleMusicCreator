@@ -5,8 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TangibleMusic"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MusicBox UI" Height="450" Width="800">
     <Grid>
-
+        <StackPanel Width="140" Height="400" HorizontalAlignment="Left" Margin="20,0,0,0">
+            <Button
+                Click="ButtonStartScan"
+                Width="100px"
+                Margin="0,20,0,0"
+                Cursor="Hand"
+                Content="Start Scan"
+                
+            />
+        </StackPanel>
+        <TextBox
+            x:Name="outputTextBox"
+            Width="600px"
+            Height="400px"
+            HorizontalAlignment="Right"
+            Margin="0,0,20,0"
+            BorderBrush="Black"
+            BorderThickness="1"
+            IsReadOnly="True"
+            
+        />
     </Grid>
+    
+    <Window.Resources>
+        <!-- Define a style for the button -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="LightBlue"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10"/>
+            <!-- Add more setters for other properties as needed -->
+        </Style>
+        <Style TargetType="StackPanel">
+            <Setter Property="Background" Value="Lavender"/>
+        </Style>
+    </Window.Resources>
 </Window>
