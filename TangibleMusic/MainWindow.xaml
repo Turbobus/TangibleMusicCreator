@@ -14,7 +14,6 @@
                 Margin="0,20,0,0"
                 Cursor="Hand"
                 Content="Start Scan"
-                
             />
         </StackPanel>
         <TextBox
