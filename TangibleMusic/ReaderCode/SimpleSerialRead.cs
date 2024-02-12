@@ -14,8 +14,10 @@ public class SimpleSerialRead
     private SerialPort port = new SerialPort("COM4", 9600, Parity.None);
     private StringBuilder stringBuilder = new StringBuilder();
     private bool haveFoundStart = false;
+    private bool storeReads = false;
     private List<char> inputBuffer = new ();
     private ArrayList timeScans = new ArrayList();
+    private ArrayList completeReads = new ArrayList();
     
     public void SerialPortProgram()
     { 
@@ -47,7 +49,12 @@ public class SimpleSerialRead
             {
                 if (c == (char)3)
                 {
-                    Console.WriteLine(stringBuilder.ToString());
+                    string finalRead = stringBuilder.ToString();
+                    Console.WriteLine(finalRead);
+                    if (storeReads)
+                    {
+                        completeReads.Add(finalRead);
+                    }
                     stringBuilder.Clear();
                     haveFoundStart = false;
                     break;
@@ -94,17 +101,20 @@ public class SimpleSerialRead
     {
         Console.WriteLine("Scan starting");
         timeScans.Clear();
+        storeReads = true;
         var stopwatch = Stopwatch.StartNew();
         while (stopwatch.Elapsed < TimeSpan.FromSeconds(6))
         {
-            string test = port.ReadExisting();
-            if (test != "")
+            if (completeReads.Count > 0)
             {
-                Console.WriteLine(test + " " + stopwatch.Elapsed);
-                string timedHex = $"{test} {stopwatch.Elapsed}";
+                var active = completeReads[0];
+                completeReads.RemoveAt(0);
+                string timedHex = $"{active} {stopwatch.Elapsed}";
+                Console.WriteLine(timedHex);
                 timeScans.Add(timedHex);
             }
         }
         stopwatch.Stop();
+        Console.WriteLine(timeScans);
     }
 }
