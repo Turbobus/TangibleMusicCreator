@@ -62,39 +62,6 @@ public class SimpleSerialRead
                 stringBuilder.Append(c);
             }
         }
-        
-        
-        /*
-        if (test.Contains((char)2))
-        {
-            Console.WriteLine("START!!!!");
-            
-        }
-        if (test.Contains((char)3))
-        {
-            Console.WriteLine("SLUTTT!!!!");
-        }
-        Console.WriteLine(test);
-        */
-        /*
-        for (int i = 0; i < port.BytesToRead; i++)
-        {
-            byte b = (byte) port.ReadByte();
-            if (b == 0x2)
-            {
-                inputBuffer = new Char[128];
-            }
-            else if (b == 0x3)
-            {
-                Console.WriteLine(new string(inputBuffer));
-                inputBuffer = new Char[128];
-            }
-            else
-            {
-                inputBuffer[i] = (char)b;
-            }
-        }
-        */
     }
 
     public void StartScan()
