@@ -27,7 +27,7 @@ public partial class MainWindow : Window
         originalConsoleOut = Console.Out;
 
         // Redirect the Console.Out to a custom TextWriter
-        Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
+        //Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
         try
         {
             _simpleSerialRead.SerialPortProgram();
@@ -43,7 +43,7 @@ public partial class MainWindow : Window
         _simpleSerialRead.StartScan();
     }
     
-    
+    /*
     // For console window to textbox
     public class MultiTextWriter : TextWriter
     {
@@ -94,5 +94,6 @@ public partial class MainWindow : Window
 
         public override Encoding Encoding => Encoding.UTF8; // Change the encoding as needed
     }
+    */
     
 }

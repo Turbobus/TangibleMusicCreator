@@ -16,8 +16,8 @@ public class SimpleSerialRead
     private bool haveFoundStart = false;
     private bool storeReads = false;
     private List<char> inputBuffer = new ();
-    private ArrayList timeScans = new ArrayList();
-    private ArrayList completeReads = new ArrayList();
+    private List<string> timeScans = new List<string>();
+    private List<string> completeReads = new List<string>();
     
     public void SerialPortProgram()
     { 
@@ -72,6 +72,8 @@ public class SimpleSerialRead
         var stopwatch = Stopwatch.StartNew();
         while (stopwatch.Elapsed < TimeSpan.FromSeconds(6))
         {
+            //Console.WriteLine(stopwatch.Elapsed);
+            //Console.WriteLine("Complete reads: " + completeReads.Count);
             if (completeReads.Count > 0)
             {
                 var active = completeReads[0];
@@ -81,7 +83,14 @@ public class SimpleSerialRead
                 timeScans.Add(timedHex);
             }
         }
+        
         stopwatch.Stop();
-        Console.WriteLine(timeScans);
+        Console.WriteLine("List Items:");
+        foreach (string scan in timeScans)
+        {
+            Console.WriteLine(scan);
+        }
+        Console.WriteLine("Scan complete");
+        //Console.WriteLine(timeScans);
     }
 }
