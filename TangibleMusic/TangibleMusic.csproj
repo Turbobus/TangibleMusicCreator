@@ -13,4 +13,8 @@
       <PackageReference Include="System.IO.Ports" Version="8.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ClCompile Include="ArduinoCode\125kHZ-RFID-reader.ino" />
+    </ItemGroup>
+
 </Project>
