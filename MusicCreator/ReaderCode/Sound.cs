@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using NAudio.Wave;
 
-namespace TangibleMusic.ReaderCode;
+namespace MusicCreator.ReaderCode;
 
 public static class Sound
 {
