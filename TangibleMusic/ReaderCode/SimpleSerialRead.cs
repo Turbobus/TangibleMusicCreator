@@ -2,13 +2,11 @@
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
 using NAudio.Wave;
 
-namespace MusicCreator.ReaderCode;
+namespace TangibleMusic.ReaderCode;
 
 public class SimpleSerialRead
 {
