@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace MusicCreator.ReaderCode;
 
 public static class Sound
 {
     private static string soundFolderpath;
-    private static readonly Dictionary<string,string> assets = new Dictionary<string, string>();
-    private static WaveOutEvent soundPlayer = new WaveOutEvent();
+    private static readonly Dictionary<string,AudioPlaybackEngine.CachedSound> assets = new ();
+    private static readonly AudioPlaybackEngine audioEngine = AudioPlaybackEngine.Instance;
+    
     public static void SetupSound()
     {
         soundFolderpath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName;
@@ -42,20 +45,23 @@ public static class Sound
                 filename = filename_raw + counter;
             }
 
-            assets.Add(filename, f);
-            Console.WriteLine("Adding " + filename + " : " + f);
+            try
+            {
+                assets.Add(filename, new AudioPlaybackEngine.CachedSound(f));
+                Console.WriteLine("Adding " + filename + " : " + f);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAILED to add sound clip : " + filename + " : " + "Invalid sound file");
+            }
         }
-    }
-
-    public static string GetSound(string soundFile)
-    {
-        if (assets.ContainsKey(soundFile))
-        {
-            return assets[soundFile];
-        }
-        
-        Console.WriteLine("No entry for " + soundFile);
-        return null;
     }
     
+    public static void PlaySound(string soundFile)
+    {
+        if (assets.TryGetValue(soundFile, out AudioPlaybackEngine.CachedSound asset))
+        {
+            audioEngine.PlaySound(asset);
+        }
+    }
 }
