@@ -27,6 +27,11 @@ class AudioPlaybackEngine : IDisposable
         var input = new AudioFileReader(fileName);
         AddMixerInput(new AutoDisposeFileReader(input));
     }
+    
+    internal void PlaySound(CachedSound sound)
+    {
+        AddMixerInput(new CachedSoundSampleProvider(sound));
+    }
 
     private ISampleProvider ConvertToRightChannelCount(ISampleProvider input)
     {
@@ -41,11 +46,6 @@ class AudioPlaybackEngine : IDisposable
         }
 
         throw new NotImplementedException("Not yet implemented this channel count conversion");
-    }
-
-    void PlaySound(CachedSound sound)
-    {
-        AddMixerInput(new CachedSoundSampleProvider(sound));
     }
 
     private void AddMixerInput(ISampleProvider input)
