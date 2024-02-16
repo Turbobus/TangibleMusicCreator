@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         originalConsoleOut = Console.Out;
+        Sound.SetupSound();
 
         // Redirect the Console.Out to a custom TextWriter
         //Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
