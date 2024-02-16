@@ -15,6 +15,13 @@
                 Cursor="Hand"
                 Content="Start Scan"
             />
+            <Button
+                Click="PlaySampleSound"
+                Width="100px"
+                Margin="0,20,0,0"
+                Cursor="Hand"
+                Content="PlaySound"
+            />
         </StackPanel>
         <TextBox
             x:Name="outputTextBox"

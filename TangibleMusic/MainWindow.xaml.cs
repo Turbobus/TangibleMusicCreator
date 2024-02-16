@@ -44,6 +44,11 @@ public partial class MainWindow : Window
         _simpleSerialRead.StartScan();
     }
     
+    private void PlaySampleSound(object sender, RoutedEventArgs e)
+    {
+        
+    }
+    
     /*
     // For console window to textbox
     public class MultiTextWriter : TextWriter
