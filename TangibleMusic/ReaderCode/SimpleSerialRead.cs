@@ -96,18 +96,15 @@ public class SimpleSerialRead
         //Console.WriteLine(timeScans);
         
         
-        
-        
-        //string soundFolderPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName; 
-        //Console.WriteLine(soundFolderPath);
-        //Console.WriteLine(Directory.GetCurrentDirectory());
         using var audioFile = new AudioFileReader(Sound.GetSound("NoLanding.mp3"));
         using var outputDevice = new WaveOutEvent();
         outputDevice.Init(audioFile);
         outputDevice.Play();
+        
         while (outputDevice.PlaybackState == PlaybackState.Playing)
         {
             Thread.Sleep(1000);
         }
+        
     }
 }
