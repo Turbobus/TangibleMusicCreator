@@ -1,11 +1,13 @@
 ﻿using System.IO;
+using NAudio.Wave;
 
 namespace TangibleMusic.ReaderCode;
 
 public static class Sound
 {
     private static string soundFolderpath;
-    private static Dictionary<string,string> assets = new Dictionary<string, string>();
+    private static readonly Dictionary<string,string> assets = new Dictionary<string, string>();
+    private static WaveOutEvent soundPlayer = new WaveOutEvent();
     public static void SetupSound()
     {
         soundFolderpath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName;
@@ -24,7 +26,7 @@ public static class Sound
         string[] files = Directory.GetFiles(dir);
         string[] dirs = Directory.GetDirectories (dir);
 
-        foreach (string d in dirs) {
+        foreach(string d in dirs) {
             WalkDirectory (d);
         }
 
@@ -38,8 +40,8 @@ public static class Sound
                 filename = filename_raw + counter;
             }
 
-            assets.Add (filename, f);
-            Console.WriteLine ("Adding " + filename + " : " + f);
+            assets.Add(filename, f);
+            Console.WriteLine("Adding " + filename + " : " + f);
         }
     }
 
