@@ -45,8 +45,15 @@ public static class Sound
                 filename = filename_raw + counter;
             }
 
-            assets.Add(filename, new AudioPlaybackEngine.CachedSound(f));
-            Console.WriteLine("Adding " + filename + " : " + f);
+            try
+            {
+                assets.Add(filename, new AudioPlaybackEngine.CachedSound(f));
+                Console.WriteLine("Adding " + filename + " : " + f);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAILED to add sound clip : " + filename + " : " + "Invalid sound file");
+            }
         }
     }
     
