@@ -15,7 +15,7 @@ public class SimpleSerialRead
     //private SerialPort com4 = new SerialPort("COM4", 9600);
     
     // Create the serial port with basic settings 
-    private SerialPort port = new SerialPort("/dev/tty.usbmodem21301", 9600, Parity.None, 8, StopBits.One);
+    private SerialPort port;
     private StringBuilder stringBuilder = new StringBuilder();
     private bool haveFoundStart = false;
     private bool storeReads = false;
@@ -23,8 +23,9 @@ public class SimpleSerialRead
     private List<string> timeScans = new List<string>();
     private List<string> completeReads = new List<string>();
     
-    public void SerialPortProgram()
+    public void StartSerialPortProgram(string portName)
     { 
+        port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
         Console.WriteLine("Incoming Data:");
         // Attach a method to be called when there
         // is data waiting in the port's buffer 
