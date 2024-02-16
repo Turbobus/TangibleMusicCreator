@@ -16,11 +16,17 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.6" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
   </ItemGroup>
 
 
   <ItemGroup>
     <Folder Include="Utils\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ClCompile Include="ArduinoCode\125kHZ-RFID-reader.ino" />
   </ItemGroup>
 </Project>
