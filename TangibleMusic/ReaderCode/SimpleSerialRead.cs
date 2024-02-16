@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Collections;
+using System.IO;
 using System.Text;
+using NAudio.Wave;
 
 namespace TangibleMusic.ReaderCode;
 
@@ -28,7 +30,7 @@ public class SimpleSerialRead
         
         // Begin communications 
         port.Open(); 
-        // Enter an application loop to keep this thread alive 
+        
     } 
 
     private void port_DataReceived(object sender, SerialDataReceivedEventArgs e) 
@@ -92,5 +94,20 @@ public class SimpleSerialRead
         }
         Console.WriteLine("Scan complete");
         //Console.WriteLine(timeScans);
+        
+        
+        
+        
+        //string soundFolderPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName; 
+        //Console.WriteLine(soundFolderPath);
+        //Console.WriteLine(Directory.GetCurrentDirectory());
+        using var audioFile = new AudioFileReader(Sound.GetSound("NoLanding.mp3"));
+        using var outputDevice = new WaveOutEvent();
+        outputDevice.Init(audioFile);
+        outputDevice.Play();
+        while (outputDevice.PlaybackState == PlaybackState.Playing)
+        {
+            Thread.Sleep(1000);
+        }
     }
 }
