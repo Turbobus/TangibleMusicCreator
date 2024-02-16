@@ -15,7 +15,7 @@ public static class Sound
         soundFolderpath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName;
         soundFolderpath = soundFolderpath.Replace("\\", Path.DirectorySeparatorChar.ToString()) + Path.DirectorySeparatorChar + "Sounds";
         Console.WriteLine("Adding sound files:\n");
-        WalkDirectory(soundFolderpath);
+        //WalkDirectory(soundFolderpath);
         Console.WriteLine("\nFinished adding sounds\n");
     }
     

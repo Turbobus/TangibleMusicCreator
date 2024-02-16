@@ -15,7 +15,7 @@ public class SimpleSerialRead
     //private SerialPort com4 = new SerialPort("COM4", 9600);
     
     // Create the serial port with basic settings 
-    private SerialPort port = new SerialPort("COM4", 9600, Parity.None);
+    private SerialPort port = new SerialPort("/dev/tty.usbmodem21301", 9600, Parity.None, 8, StopBits.One);
     private StringBuilder stringBuilder = new StringBuilder();
     private bool haveFoundStart = false;
     private bool storeReads = false;

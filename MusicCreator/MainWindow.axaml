@@ -5,5 +5,33 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MusicCreator.MainWindow"
         Title="MusicCreator">
-    <TextBox Name="Greeting"></TextBox>
+        <Grid>
+                <StackPanel Width="140" Height="400" HorizontalAlignment="Left" Margin="20,0,0,0">
+                        <Button
+                                Click="StartScan"
+                                Width="100"
+                                Margin="0,20,0,0"
+                                Cursor="Hand"
+                                Content="Start Scan"
+                        />
+                        <Button
+                                Click="PlaySampleSound"
+                                Width="100"
+                                Margin="0,20,0,0"
+                                Cursor="Hand"
+                                Content="Play Sound"
+                        />
+                </StackPanel>
+                <TextBox
+                        x:Name="outputTextBox"
+                        Width="600"
+                        Height="400"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,20,0"
+                        BorderBrush="Black"
+                        BorderThickness="1"
+                        IsReadOnly="True"
+            
+                />
+        </Grid>
 </Window>
