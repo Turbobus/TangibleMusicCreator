@@ -26,13 +26,21 @@ public class SimpleSerialRead
     private Dictionary<string, string> tagConverter = new Dictionary<string, string>();
     
     public void StartSerialPortProgram(string portName)
-    { 
-        port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
+    {
+        try
+        {
+            port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Couldn't open port, error: ", e);
+        }
+
         Console.WriteLine("Incoming Data:");
         
-        tagConverter.Add("3D004AE3B622", "MainMenuMusic.mp3");
-        tagConverter.Add("3C0090A34649", "Yeah.mp3");
-        tagConverter.Add("3E000A6FBBE0", "toggle.mp3");
+        // tagConverter.Add("3D004AE3B622", "MainMenuMusic.mp3");
+        // tagConverter.Add("3C0090A34649", "Yeah.mp3");
+        // tagConverter.Add("3E000A6FBBE0", "toggle.mp3");
         
         
         // Attach a method to be called when there

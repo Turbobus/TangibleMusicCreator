@@ -21,14 +21,9 @@
                                 Cursor="Hand"
                                 Content="Play Sound"
                         />
-                        <ComboBox SelectedIndex="0" 
-                                  MaxDropDownHeight="100"
-                                  Margin="0,20,0,0"
-                                  SelectionChanged="OnSelectionChanged"
-                                  Name="PortComboBox">
-                                <ComboBoxItem>COM 4</ComboBoxItem>
-                                <ComboBoxItem>/dev/tty.usbmodem21301</ComboBoxItem>
-                        </ComboBox>
+                        <TextBox Margin="0,40,0,0" Name="PortName">COM 4</TextBox>
+                        <Button Margin="0,10,0,0"
+                                Click="PortButtonClicked">Change Port</Button>
                 </StackPanel>
                 <TextBox
                         x:Name="outputTextBox"

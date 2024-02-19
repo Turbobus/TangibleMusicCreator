@@ -16,7 +16,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
-        Sound.SetupSound();
+        //Sound.SetupSound();
 
         // Redirect the Console.Out to a custom TextWriter
         originalConsoleOut = Console.Out;
@@ -31,16 +31,12 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    public void PortButtonClicked(object source, RoutedEventArgs args)
     {
-        var selection = PortComboBox?.SelectedItem is ComboBoxItem item ? item : null;
-        if (selection != null)
-        {
-            outputTextBox.Text = "";
-            _simpleSerialRead.StartSerialPortProgram(selection.Content?.ToString() ?? "COM 4");
-        }
+        outputTextBox.Text = "";
+        _simpleSerialRead.StartSerialPortProgram(PortName.Text ?? "COM 4");
     }
-
+    
     private void StartScan(object sender, RoutedEventArgs args)
     {
         _simpleSerialRead.StartScan();
