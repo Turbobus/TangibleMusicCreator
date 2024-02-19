@@ -16,14 +16,14 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
-        //Sound.SetupSound();
+        Sound.SetupSound();
 
         // Redirect the Console.Out to a custom TextWriter
         originalConsoleOut = Console.Out;
         Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
         try
         {
-            _simpleSerialRead.StartSerialPortProgram("/dev/tty.usbmodem1431101");
+            _simpleSerialRead.StartSerialPortProgram("COM 4");
         }
         catch (Exception e)
         {

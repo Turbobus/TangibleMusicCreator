@@ -27,6 +27,7 @@ public class SimpleSerialRead
     
     public void StartSerialPortProgram(string portName)
     {
+        Console.WriteLine(portName);
         try
         {
             port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
@@ -38,9 +39,9 @@ public class SimpleSerialRead
 
         Console.WriteLine("Incoming Data:");
         
-        // tagConverter.Add("3D004AE3B622", "MainMenuMusic.mp3");
-        // tagConverter.Add("3C0090A34649", "Yeah.mp3");
-        // tagConverter.Add("3E000A6FBBE0", "toggle.mp3");
+        tagConverter.Add("3D004AE3B622", "NoLanding.mp3");
+        tagConverter.Add("3C0090A34649", "Yeah.mp3");
+        tagConverter.Add("3E000A6FBBE0", "toggle.mp3");
         
         
         // Attach a method to be called when there
@@ -83,6 +84,7 @@ public class SimpleSerialRead
     {
         // Reads completed input string
         string finalRead = stringBuilder.ToString();
+        Console.WriteLine(finalRead);
         
         // Plays sound for that tag (will be removed later)
         //Sound.PlaySound(tagConverter[finalRead]);
@@ -97,13 +99,33 @@ public class SimpleSerialRead
         stringBuilder.Clear();
     }
 
+    private void PlayScannedSound()
+    {
+        Console.WriteLine("\nStaring scanned playback");
+        TimeSpan timeDiff = TimeSpan.Zero;
+        foreach ((string, TimeSpan) tag in timeScans)
+        {
+            // I dont know why this sometimes throws an null pointer exception for the key
+            // Added null check and hope it fixes it
+            if (tag.Item1 == null || !tagConverter.ContainsKey(tag.Item1))
+            { continue; }
+            
+            Thread.Sleep(tag.Item2 - timeDiff);
+            
+            Console.WriteLine("Playing: " + tagConverter[tag.Item1]);
+            Sound.PlaySound(tagConverter[tag.Item1]);
+            timeDiff = tag.Item2;
+        }
+        Console.WriteLine("Finished scanned playback\n");
+    }
+
     public void StartScan()
     {
         Console.WriteLine("Scan starting");
         timeScans.Clear();
         storeReads = true;
         var stopwatch = Stopwatch.StartNew();
-        while (stopwatch.Elapsed < TimeSpan.FromSeconds(6))
+        while (stopwatch.Elapsed < TimeSpan.FromSeconds(10))
         {
             //Console.WriteLine(stopwatch.Elapsed);
             //Console.WriteLine("Complete reads: " + completeReads.Count);
@@ -127,6 +149,11 @@ public class SimpleSerialRead
         }
         Console.WriteLine("Scan complete");
         //Console.WriteLine(timeScans);
+
+        
+        // Start playback thread
+        Thread playbackThread = new Thread(PlayScannedSound);
+        playbackThread.Start();
     }
 
     private void PaceTimeScans(int tempo)
@@ -150,9 +177,8 @@ public class SimpleSerialRead
                 adjustedMilliseconds = milliseconds + (fraction - rest);
             }
             
-            TimeSpan newTimeSpan = 
-                TimeSpan.FromSeconds(scan.Item2.TotalSeconds + TimeSpan.FromMilliseconds(adjustedMilliseconds);
-            timeScans[index] = (scan.Item1, newTimeSpan);
+            //TimeSpan newTimeSpan = TimeSpan.FromSeconds(scan.Item2.TotalSeconds + TimeSpan.FromMilliseconds(adjustedMilliseconds);
+            //timeScans[index] = (scan.Item1, newTimeSpan);
         }
     }
 }
