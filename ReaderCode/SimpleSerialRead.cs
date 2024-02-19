@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using NAudio.Wave;
+
 
 namespace MusicCreator.ReaderCode;
 
@@ -20,7 +20,7 @@ public class SimpleSerialRead
     private bool haveFoundStart = false;
     private bool storeReads = false;
     private List<char> inputBuffer = new ();
-    private List<string> timeScans = new List<string>();
+    private List<(string,TimeSpan)> timeScans = new List<(string,TimeSpan)>();
     private List<string> completeReads = new List<string>();
 
     private Dictionary<string, string> tagConverter = new Dictionary<string, string>();
@@ -70,20 +70,31 @@ public class SimpleSerialRead
             {
                 if (c == (char)3)
                 {
-                    string finalRead = stringBuilder.ToString();
-                    Sound.PlaySound(tagConverter[finalRead]);
-                    Console.WriteLine(finalRead);
-                    if (storeReads)
-                    {
-                        completeReads.Add(finalRead);
-                    }
-                    stringBuilder.Clear();
+                    CompleteRead();
                     haveFoundStart = false;
                     break;
                 }
                 stringBuilder.Append(c);
             }
         }
+    }
+
+    private void CompleteRead()
+    {
+        // Reads completed input string
+        string finalRead = stringBuilder.ToString();
+        
+        // Plays sound for that tag (will be removed later)
+        //Sound.PlaySound(tagConverter[finalRead]);
+        
+        // Read storage
+        if (storeReads)
+        {
+            completeReads.Add(finalRead);
+        }
+        
+        // Clear stringbuilder
+        stringBuilder.Clear();
     }
 
     public void StartScan()
@@ -100,19 +111,48 @@ public class SimpleSerialRead
             {
                 var active = completeReads[0];
                 completeReads.RemoveAt(0);
-                string timedHex = $"{active} {stopwatch.Elapsed}";
-                Console.WriteLine(timedHex);
-                timeScans.Add(timedHex);
+                TimeSpan timespan = stopwatch.Elapsed;
+                string elapsedTime = $"{timespan.Seconds:00}:{timespan.Milliseconds:00}";
+                Console.WriteLine($"{active} {elapsedTime}");
+                timeScans.Add((active, timespan));
             }
         }
         
         stopwatch.Stop();
-        Console.WriteLine("List Items:");
-        foreach (string scan in timeScans)
+        Console.WriteLine("Listing all Items:");
+        foreach ((string, TimeSpan) scan in timeScans)
         {
-            Console.WriteLine(scan);
+            string elapsedTime = $"{scan.Item2.Seconds:00}:{scan.Item2.Milliseconds:00}";
+            Console.WriteLine(scan.Item1 + " " + elapsedTime);
         }
         Console.WriteLine("Scan complete");
         //Console.WriteLine(timeScans);
+    }
+
+    private void PaceTimeScans(int tempo)
+    {
+        int index = 0;
+        foreach ((string, TimeSpan) scan in timeScans)
+        {
+            double fraction = 1.0 / tempo;
+            double seconds = scan.Item2.TotalSeconds;
+            double milliseconds = scan.Item2.TotalMilliseconds;
+            double rest = milliseconds % fraction;
+
+            // Calculate the adjusted milliseconds based on the closest tempo
+            double adjustedMilliseconds;
+            if (rest < fraction / 2)
+            {
+                adjustedMilliseconds = milliseconds - rest;
+            }
+            else
+            {
+                adjustedMilliseconds = milliseconds + (fraction - rest);
+            }
+            
+            TimeSpan newTimeSpan = 
+                TimeSpan.FromSeconds(scan.Item2.TotalSeconds + TimeSpan.FromMilliseconds(adjustedMilliseconds);
+            timeScans[index] = (scan.Item1, newTimeSpan);
+        }
     }
 }

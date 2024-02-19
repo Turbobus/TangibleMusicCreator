@@ -23,7 +23,7 @@ public partial class MainWindow : Window
         Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
         try
         {
-            _simpleSerialRead.StartSerialPortProgram("COM 4");
+            _simpleSerialRead.StartSerialPortProgram("/dev/tty.usbmodem1431101");
         }
         catch (Exception e)
         {
