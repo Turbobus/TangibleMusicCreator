@@ -1,48 +1,29 @@
 using System;
-using System.IO;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using MusicCreator.ReaderCode;
 using MusicCreator.UI;
+
 
 namespace MusicCreator;
 
 public partial class MainWindow : Window
 {
-    private SimpleSerialRead _simpleSerialRead = new SimpleSerialRead();
-    private TextWriter originalConsoleOut;
-
+    private Dashboard dashboard;
+    private MusicExplorer musicExplorer;
     public MainWindow()
     {
         InitializeComponent();
-        
-        //Sound.SetupSound();
-
-        // Redirect the Console.Out to a custom TextWriter
-        originalConsoleOut = Console.Out;
-        Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
-        try
-        {
-            _simpleSerialRead.StartSerialPortProgram("COM 4");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("-ERROR- " + e.Message);
-        }
+        dashboard = new Dashboard(ShowMusicExplorer);
+        musicExplorer = new MusicExplorer(ShowDashboard);
+        Content = dashboard;
     }
 
-    public void PortButtonClicked(object source, RoutedEventArgs args)
+    private void ShowMusicExplorer()
     {
-        outputTextBox.Text = "";
-        _simpleSerialRead.StartSerialPortProgram(PortName.Text ?? "COM 4");
-    }
-    
-    private void StartScan(object sender, RoutedEventArgs args)
-    {
-        _simpleSerialRead.StartScan();
+        Content = musicExplorer;
     }
 
-    private void PlaySampleSound(object sender, RoutedEventArgs args)
+    private void ShowDashboard()
     {
+        Content = dashboard;
     }
 }

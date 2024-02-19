@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MusicCreator.UI.Dashboard">
+    <Grid>
+        <StackPanel Width="140" Height="400" HorizontalAlignment="Left" Margin="20,0,0,0">
+            <Button
+                Click="StartScan"
+                Width="100"
+                Margin="0,20,0,0"
+                Cursor="Hand"
+                Content="Start Scan"
+            />
+            <Button
+                Click="PlaySampleSound"
+                Width="100"
+                Margin="0,20,0,0"
+                Cursor="Hand"
+                Content="Play Sound"
+            />
+            <TextBox Margin="0,40,0,0" Name="PortName">COM 4</TextBox>
+            <Button Margin="0,10,0,0"
+                    Click="PortButtonClicked">Change Port</Button>
+                        
+            <Button Margin="0, 20, 0, 0" Click="ShowSoundLibrary">Sound Library</Button>
+        </StackPanel>
+        <TextBox
+            x:Name="outputTextBox"
+            Width="600"
+            Height="400"
+            HorizontalAlignment="Right"
+            Margin="0,0,20,0"
+            BorderBrush="Black"
+            BorderThickness="1"
+            IsReadOnly="True"
+            
+        />
+    </Grid>
+</UserControl>
