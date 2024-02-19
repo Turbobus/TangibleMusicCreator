@@ -103,6 +103,7 @@ public class SimpleSerialRead
     {
         Console.WriteLine("\nStaring scanned playback");
         TimeSpan timeDiff = TimeSpan.Zero;
+        
         foreach ((string, TimeSpan) tag in timeScans)
         {
             // I dont know why this sometimes throws an null pointer exception for the key
@@ -110,9 +111,9 @@ public class SimpleSerialRead
             if (tag.Item1 == null || !tagConverter.ContainsKey(tag.Item1))
             { continue; }
             
+            // Sleeps thread until next sound should play
             Thread.Sleep(tag.Item2 - timeDiff);
             
-            Console.WriteLine("Playing: " + tagConverter[tag.Item1]);
             Sound.PlaySound(tagConverter[tag.Item1]);
             timeDiff = tag.Item2;
         }
