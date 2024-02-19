@@ -15,17 +15,26 @@ public class SimpleSerialRead
     //private SerialPort com4 = new SerialPort("COM4", 9600);
     
     // Create the serial port with basic settings 
-    private SerialPort port = new SerialPort("COM4", 9600, Parity.None);
+    private SerialPort port;
     private StringBuilder stringBuilder = new StringBuilder();
     private bool haveFoundStart = false;
     private bool storeReads = false;
     private List<char> inputBuffer = new ();
     private List<string> timeScans = new List<string>();
     private List<string> completeReads = new List<string>();
+
+    private Dictionary<string, string> tagConverter = new Dictionary<string, string>();
     
-    public void SerialPortProgram()
+    public void StartSerialPortProgram(string portName)
     { 
+        port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
         Console.WriteLine("Incoming Data:");
+        
+        tagConverter.Add("3D004AE3B622", "MainMenuMusic.mp3");
+        tagConverter.Add("3C0090A34649", "Yeah.mp3");
+        tagConverter.Add("3E000A6FBBE0", "toggle.mp3");
+        
+        
         // Attach a method to be called when there
         // is data waiting in the port's buffer 
         port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
@@ -54,6 +63,7 @@ public class SimpleSerialRead
                 if (c == (char)3)
                 {
                     string finalRead = stringBuilder.ToString();
+                    Sound.PlaySound(tagConverter[finalRead]);
                     Console.WriteLine(finalRead);
                     if (storeReads)
                     {
@@ -96,17 +106,5 @@ public class SimpleSerialRead
         }
         Console.WriteLine("Scan complete");
         //Console.WriteLine(timeScans);
-        
-        
-        using var audioFile = new AudioFileReader(Sound.GetSound("NoLanding.mp3"));
-        using var outputDevice = new WaveOutEvent();
-        outputDevice.Init(audioFile);
-        outputDevice.Play();
-        
-        while (outputDevice.PlaybackState == PlaybackState.Playing)
-        {
-            Thread.Sleep(1000);
-        }
-        
     }
 }
