@@ -22,11 +22,19 @@ public class SimpleSerialRead
     private List<char> inputBuffer = new ();
     private List<string> timeScans = new List<string>();
     private List<string> completeReads = new List<string>();
+
+    private Dictionary<string, string> tagConverter = new Dictionary<string, string>();
     
     public void StartSerialPortProgram(string portName)
     { 
         port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
         Console.WriteLine("Incoming Data:");
+        
+        tagConverter.Add("3D004AE3B622", "MainMenuMusic.mp3");
+        tagConverter.Add("3C0090A34649", "Yeah.mp3");
+        tagConverter.Add("3E000A6FBBE0", "toggle.mp3");
+        
+        
         // Attach a method to be called when there
         // is data waiting in the port's buffer 
         port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
@@ -55,6 +63,7 @@ public class SimpleSerialRead
                 if (c == (char)3)
                 {
                     string finalRead = stringBuilder.ToString();
+                    Sound.PlaySound(tagConverter[finalRead]);
                     Console.WriteLine(finalRead);
                     if (storeReads)
                     {
@@ -97,7 +106,5 @@ public class SimpleSerialRead
         }
         Console.WriteLine("Scan complete");
         //Console.WriteLine(timeScans);
-        
-        
     }
 }
