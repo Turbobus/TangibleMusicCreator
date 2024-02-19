@@ -45,17 +45,6 @@ public partial class Dashboard : UserControl
         _simpleSerialRead.StartScan();
     }
 
-    private void PlaySound()
-    {
-        var workingDirectory = Environment.CurrentDirectory;
-        var basePath = Directory.GetParent(workingDirectory)?.Parent?.Parent?.FullName ?? "";
-        var scriptPath = basePath + "/Scripts/playSound.sh";
-        var musicPath = basePath + "/Sounds/1.mp3";
-        var startInfo = new ProcessStartInfo() { FileName = scriptPath, Arguments = musicPath };
-        var proc = new Process() { StartInfo = startInfo };
-        proc.Start();
-    }
-
     private void ShowSoundLibrary(object sender, RoutedEventArgs args)
     {
         showMusicExplorerAction();
