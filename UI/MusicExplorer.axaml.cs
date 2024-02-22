@@ -11,6 +11,7 @@ namespace MusicCreator.UI;
 public partial class MusicExplorer : UserControl
 {
     private Action showDashboardAction;
+    private string selectedSong;
     public MusicExplorer(Action showDashboard)
     {
         InitializeComponent();
@@ -33,6 +34,23 @@ public partial class MusicExplorer : UserControl
     private void KillSound(object sender, RoutedEventArgs args)
     {
        _stopSound();
+    }
+
+    private void SelectSound(object sender, RoutedEventArgs args)
+    {
+        var tag = ((Button)sender).Tag?.ToString() ?? "";
+        selectedSong = tag;
+        SoundSelection.Text = tag;
+    }
+
+    private void UploadSound(object sender, RoutedEventArgs args)
+    {
+        Console.WriteLine("Upload Sound");   
+    }
+    
+    private void ScanTag(object sender, RoutedEventArgs args)
+    {
+        Console.WriteLine("Scan Tag");
     }
     
     private void PlaySound(string fileName)

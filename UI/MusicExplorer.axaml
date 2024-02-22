@@ -6,24 +6,48 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MusicCreator.UI.MusicExplorer"
              x:DataType="ui:MusicExplorerViewModel">
-    <StackPanel HorizontalAlignment="Left" Margin="50, 50, 0, 0">
-    <ItemsControl ItemsSource="{Binding Items}">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <DockPanel HorizontalAlignment="Left" Width="500">
-                    <TextBlock Text="{Binding}" />
-                    <Button Margin="40,0,0,0"
-                            HorizontalAlignment="Right"
-                            Tag="{Binding}" 
-                            Click="PlaySound">Play Sound</Button>
-                </DockPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
-        <StackPanel HorizontalAlignment="Left">
-        <Button Margin="0, 100, 0, 0" Click="ShowDashboard">Go Back To Dashboard</Button>
-            <Button Click="KillSound">Stop Sound</Button>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <StackPanel HorizontalAlignment="Left" Margin="50, 50, 0, 0" Grid.Column="0">
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Width="500">
+                            <TextBlock DockPanel.Dock="Left" 
+                                       Text="{Binding}"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Tag="{Binding}"
+                                    Click="PlaySound">
+                                Play Sound
+                            </Button>
+                            <Button Tag="{Binding}"
+                                    Click="SelectSound">
+                                Select Sound
+                            </Button>
+                            </StackPanel>
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <StackPanel HorizontalAlignment="Left" Margin="0, 100, 0, 0">
+                <Button Click="KillSound">Stop Sound</Button>
+                <Button Click="ShowDashboard">Go Back To Dashboard</Button>
+            </StackPanel>
+            
         </StackPanel>
-        
-    </StackPanel>
+        <StackPanel Grid.Column="1" HorizontalAlignment="Left" Margin="50, 50, 0, 0">
+            <Label>Selected for Upload:</Label>
+            <TextBox Name="SoundSelection" Grid.Column="1" Margin="0,5,0,0">No Sound Selected</TextBox>
+            <Button Margin="0,15,0,0" Click="UploadSound">Upload Sound to Tag</Button>
+        </StackPanel>
+        <StackPanel Grid.Column="2" HorizontalAlignment="Left" Margin="50, 50, 0, 0">
+            <Label>Sound on Tag:</Label>
+            <TextBox Name="ScanResult" Grid.Column="1" Margin="0,5,0,0">No Tag Scanned</TextBox>
+            <Button Margin="0,15,0,0" Click="ScanTag">Scan Tag</Button>
+        </StackPanel>
+    </Grid>
 </UserControl>
