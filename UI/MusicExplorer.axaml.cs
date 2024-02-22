@@ -3,25 +3,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 
 namespace MusicCreator.UI;
 
 public partial class MusicExplorer : UserControl
 {
     private Action showDashboardAction;
-    public ObservableCollection<string> Items;
     public MusicExplorer(Action showDashboard)
     {
         InitializeComponent();
         showDashboardAction = showDashboard;
         DataContext = new MusicExplorerViewModel();
-        
-        
     }
     
     private void ShowDashboard(object sender, RoutedEventArgs args)
@@ -31,11 +25,17 @@ public partial class MusicExplorer : UserControl
 
     private void PlaySound(object sender, RoutedEventArgs args)
     {
+        _stopSound();
         var tag = ((Button)sender).Tag?.ToString() ?? "";
         PlaySound(tag);
     }
     
-    private static void PlaySound(string fileName)
+    private void KillSound(object sender, RoutedEventArgs args)
+    {
+       _stopSound();
+    }
+    
+    private void PlaySound(string fileName)
     {
         var workingDirectory = Environment.CurrentDirectory;
         var basePath = Directory.GetParent(workingDirectory)?.Parent?.Parent?.FullName ?? "";
@@ -44,5 +44,19 @@ public partial class MusicExplorer : UserControl
         var startInfo = new ProcessStartInfo() { FileName = scriptPath, Arguments = musicPath };
         var proc = new Process() { StartInfo = startInfo };
         proc.Start();
+    }
+    
+    private void _stopSound()
+    {
+        var startInfo = new ProcessStartInfo()
+        {
+            FileName = "/bin/bash",
+            Arguments = $"-c \"ps -A | grep \"afplay\" | awk '{{print $1}}' | xargs kill -9\"",
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+        var proc = new Process() { StartInfo = startInfo };
+        proc.Start();
+        proc.WaitForExit();
     }
 }

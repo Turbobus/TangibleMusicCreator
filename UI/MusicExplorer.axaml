@@ -6,19 +6,24 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MusicCreator.UI.MusicExplorer"
              x:DataType="ui:MusicExplorerViewModel">
-    <StackPanel>
+    <StackPanel HorizontalAlignment="Left" Margin="50, 50, 0, 0">
     <ItemsControl ItemsSource="{Binding Items}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <StackPanel Orientation="Horizontal" Spacing="20">
+                <DockPanel HorizontalAlignment="Left" Width="500">
                     <TextBlock Text="{Binding}" />
-                    <Button Margin="40,0,0,0" 
+                    <Button Margin="40,0,0,0"
+                            HorizontalAlignment="Right"
                             Tag="{Binding}" 
                             Click="PlaySound">Play Sound</Button>
-                </StackPanel>
+                </DockPanel>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
-    <Button Click="ShowDashboard">Go Back To Dashboard</Button>
+        <StackPanel HorizontalAlignment="Left">
+        <Button Margin="0, 100, 0, 0" Click="ShowDashboard">Go Back To Dashboard</Button>
+            <Button Click="KillSound">Stop Sound</Button>
+        </StackPanel>
+        
     </StackPanel>
 </UserControl>
