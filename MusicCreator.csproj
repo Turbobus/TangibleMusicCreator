@@ -21,4 +21,10 @@
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <ClCompile Include="ArduinoCode\NDEF_HSU_Read.ino" />
+    <ClCompile Include="ArduinoCode\NFC_Total_Read.ino" />
+  </ItemGroup>
 </Project>
