@@ -82,13 +82,13 @@ void loop(void) {
 
   if (success) {
     // Display some basic information about the card
-    Serial.println("Found an ISO14443A card");
-    Serial.print("  UID Length: ");
-    Serial.print(uidLength, DEC);
-    Serial.println(" bytes");
-    Serial.print("  UID Value: ");
-    nfc.PrintHex(uid, uidLength);
-    Serial.println("");
+    // Serial.println("Found an ISO14443A card");
+    // Serial.print("  UID Length: ");
+    // Serial.print(uidLength, DEC);
+    // Serial.println(" bytes");
+    // Serial.print("  UID Value: ");
+    // nfc.PrintHex(uid, uidLength);
+    // Serial.println("");
 
     if (uidLength == 4) {
       // We probably have a Mifare Classic card ...
@@ -134,20 +134,43 @@ void loop(void) {
 
     if (uidLength == 7) {
       // We probably have a Mifare Ultralight card ...
-      Serial.println("Seems to be a Mifare Ultralight tag (7 byte UID)");
-      readUltralight();
+      Serial.println("");
+      Serial.println("Detected a Mifare Ultralight tag (7 byte UID)");
+      bool read;
+      String result;
+      read = readUltralight(&result);
+      if (read) {
+        Serial.print("Tag Data: ");
+        Serial.println(result);
+      } else {
+        Serial.println("Tag Retrieval Failed");
+      }
       delay(1000);
     } else {
       Serial.println("Ooops ... unable to read the requested page!?");
     }
+    Serial.println("");
   }
 }
 
-void readUltralight() {
+bool readUltralight(String* result) {
     uint8_t entries[8 * 4];
 
-      // Try to read the first general-purpose user page (#4)
-      for (int p = 7; p < 15; p++) {
+    // Retrieve Raw Data from Tag
+    bool successfulRetrieval;
+    successfulRetrieval = getEntriesFromUltralight(entries);
+    if (!successfulRetrieval) {
+      Serial.println("Tag Scan failed, stopping Ultralight read!");
+      return false;
+    }
+
+    //Convert raw entries to String
+    *result = extractDataFromPages(entries);
+    return true;
+}
+
+bool getEntriesFromUltralight(uint8_t *entries) {
+  for (int p = 7; p < 15; p++) {
         uint8_t data[4];
         int retries = 0;
         bool success = false;
@@ -157,24 +180,19 @@ void readUltralight() {
           success = nfc.mifareultralight_ReadPage(p, buffer);
           if (success) {
             copy(buffer, data, 4);
-          } else if (retries > 15) {
-            Serial.println("Give up reading");
-            break;
+          } else if (retries > 20) {
+            Serial.println("Fatal error during read!");
+            return false;
           }
           delay(10);
         }
-        Serial.println("");
         int baseIndex = (p - 7) * 4;
         for (int i = 0; i < 4; i++) {
           entries[baseIndex + i] = data[i];
         }
         delay(10);
       }
-      Serial.println("Successfully read data from tag, now converting...");
-      String result;
-      result = extractDataFromPages(entries);
-      Serial.println("Tag Data:");
-      Serial.println(result);
+      return true;
 }
 
 void scan(int p) {
@@ -203,9 +221,6 @@ String extractDataFromPages(uint8_t entries[8 * 4]) {
     }
   }
 };
-
-char convertIntToChar(uint8_t input) {
-}
 
 void copy(uint8_t* src, uint8_t* dst, int len) {
   memcpy(dst, src, sizeof(src[0]) * len);
