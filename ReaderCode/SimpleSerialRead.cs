@@ -29,7 +29,7 @@ public class SimpleSerialRead
     {
         try
         {
-            port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
+            port = new SerialPort(portName, 115200, Parity.None, 8, StopBits.One);
         }
         catch (Exception e)
         {
@@ -71,7 +71,7 @@ public class SimpleSerialRead
                 if (c == (char)3)
                 {
                     string finalRead = stringBuilder.ToString();
-                    Sound.PlaySound(tagConverter[finalRead]);
+                    //Sound.PlaySound(tagConverter[finalRead]);
                     Console.WriteLine(finalRead);
                     if (storeReads)
                     {

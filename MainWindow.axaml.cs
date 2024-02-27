@@ -23,7 +23,7 @@ public partial class MainWindow : Window
         Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
         try
         {
-            _simpleSerialRead.StartSerialPortProgram("COM 4");
+            _simpleSerialRead.StartSerialPortProgram("COM 3");
         }
         catch (Exception e)
         {
@@ -34,7 +34,7 @@ public partial class MainWindow : Window
     public void PortButtonClicked(object source, RoutedEventArgs args)
     {
         outputTextBox.Text = "";
-        _simpleSerialRead.StartSerialPortProgram(PortName.Text ?? "COM 4");
+        _simpleSerialRead.StartSerialPortProgram(PortName.Text ?? "COM 3");
     }
     
     private void StartScan(object sender, RoutedEventArgs args)
