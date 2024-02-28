@@ -10,20 +10,23 @@ namespace MusicCreator;
 public partial class MainWindow : Window
 {
     private SimpleSerialRead _simpleSerialRead = new SimpleSerialRead();
+    private ReadSerialMusic readSerialMusic = new ReadSerialMusic();
     private TextWriter originalConsoleOut;
 
     public MainWindow()
     {
         InitializeComponent();
         
-        //Sound.SetupSound();
+        Sound.SetupSound();
 
         // Redirect the Console.Out to a custom TextWriter
         originalConsoleOut = Console.Out;
         Console.SetOut(new MultiTextWriter(originalConsoleOut, new MyTextBoxWriter(outputTextBox)));
         try
         {
-            _simpleSerialRead.StartSerialPortProgram("COM 3");
+            //_simpleSerialRead.StartSerialPortProgram("COM 3");
+            
+            readSerialMusic.StartSerialMusicProgram("COM 3");
         }
         catch (Exception e)
         {
@@ -34,15 +37,24 @@ public partial class MainWindow : Window
     public void PortButtonClicked(object source, RoutedEventArgs args)
     {
         outputTextBox.Text = "";
-        _simpleSerialRead.StartSerialPortProgram(PortName.Text ?? "COM 3");
+        //_simpleSerialRead.StartSerialPortProgram(PortName.Text ?? "COM 3");
+        readSerialMusic.StartSerialMusicProgram(PortName.Text ?? "COM 3");
     }
     
     private void StartScan(object sender, RoutedEventArgs args)
     {
-        _simpleSerialRead.StartScan();
+        //_simpleSerialRead.StartScan();
+        readSerialMusic.DecodeCommand("start");
+    }
+    
+    private void EndScan(object sender, RoutedEventArgs args)
+    {
+        //_simpleSerialRead.StartScan();
+        readSerialMusic.DecodeCommand("end");
     }
 
     private void PlaySampleSound(object sender, RoutedEventArgs args)
     {
+        readSerialMusic.DecodeCommand("play");
     }
 }

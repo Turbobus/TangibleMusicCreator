@@ -15,6 +15,7 @@ public static class Sound
     
     public static void SetupSound()
     {
+        if (MacCheck()) { return; }
         soundFolderpath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName;
         soundFolderpath = soundFolderpath.Replace("\\", Path.DirectorySeparatorChar.ToString()) + Path.DirectorySeparatorChar + "Sounds";
         Console.WriteLine("Adding sound files:\n");
@@ -59,9 +60,18 @@ public static class Sound
     
     public static void PlaySound(string soundFile)
     {
+        Console.WriteLine("Playing sound: " + soundFile);
+        
+        if (MacCheck()) { return; }
+        
         if (assets.TryGetValue(soundFile, out AudioPlaybackEngine.CachedSound asset))
         {
             audioEngine.PlaySound(asset);
         }
+    }
+
+    private static bool MacCheck()
+    {
+        return Path.DirectorySeparatorChar.ToString() != "\\";
     }
 }
