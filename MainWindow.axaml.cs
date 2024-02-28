@@ -55,5 +55,6 @@ public partial class MainWindow : Window
 
     private void PlaySampleSound(object sender, RoutedEventArgs args)
     {
+        readSerialMusic.DecodeCommand("play");
     }
 }
