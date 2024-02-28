@@ -11,13 +11,20 @@ public class ReadSerialMusic
 {
     // Create the serial port with basic settings 
     private SerialPort port;
-    private StringBuilder stringBuilder = new StringBuilder();
-    private bool haveFoundStart = false;
-    private bool storeReads = false;
-    private List<char> inputBuffer = new ();
-    private List<(string,TimeSpan)> timeScans = new List<(string,TimeSpan)>();
-    private List<string> completeReads = new List<string>();
     
+    // Parsing helpers
+    private readonly StringBuilder stringBuilder = new StringBuilder();
+    private bool haveFoundStart = false;
+    
+    // Scanning helpers
+    private bool storeReads = false;
+    private readonly Stopwatch stopwatch = new Stopwatch();
+    private readonly List<(string,TimeSpan)> timeScans = new List<(string,TimeSpan)>();
+    
+    /// <summary>
+    /// Starts music program on given serial port
+    /// </summary>
+    /// <param name="portName">Serial port</param>
     public void StartSerialMusicProgram(string portName)
     {
         try
@@ -43,12 +50,14 @@ public class ReadSerialMusic
     private void port_DataReceived(object sender, SerialDataReceivedEventArgs e) 
     { 
         // Show all the incoming data in the port's buffer
-        string test = port.ReadExisting();
+        string incomingData = port.ReadExisting();
 
-        foreach (char c in test)
+        foreach (char c in incomingData)
         {
+            // If we haven't found start token (0x02)
             if (!haveFoundStart)
             {
+                // Look for it
                 if (c == (char)2)
                 {
                     haveFoundStart = true;
@@ -56,12 +65,15 @@ public class ReadSerialMusic
             }
             else
             {
+                // If we found end token (0x03), complete read
                 if (c == (char)3)
                 {
                     CompleteRead();
                     haveFoundStart = false;
                     break;
                 }
+                
+                // Otherwise, add token to string builder
                 stringBuilder.Append(c);
             }
         }
@@ -71,36 +83,65 @@ public class ReadSerialMusic
     {
         // Reads completed input string
         string finalRead = stringBuilder.ToString();
-        Console.WriteLine(finalRead);
         
+        // Sends message to decoder
+        DecodeCommand(finalRead);
+        
+        // Clear string builder
+        stringBuilder.Clear();
+    }
+
+    internal void DecodeCommand(string finalRead)
+    {
+        Console.WriteLine(finalRead);
         switch(finalRead) 
         {
             case "programOn":
-                // Reset everything and be ready
+                stopwatch.Reset();
+                timeScans.Clear();
+                storeReads = false;
                 break;
             case "start":
-                StartScan();
+                // Start stopwatch and clear timeScans
+                stopwatch.Start();
+                timeScans.Clear();
+                storeReads = true;
                 break;
             case "end":
-                // EndScan
+                // Reset stopwatch and stop storing reads
+                stopwatch.Reset();
+                storeReads = false;
                 break;
             case "play":
-                PlayScannedSound();
+                // Start a playback thread
+                Thread playbackThread = new Thread(PlayScannedSound);
+                playbackThread.Start();
                 break;
             case "error":
                 // Play error sound
+                Sound.PlaySound("NoLanding.mp3");
                 break;
             default:
-                // If we should save the reads, add to list
-                if (storeReads)
-                {
-                    completeReads.Add(finalRead);
-                }
+                HandleIncomingSound(finalRead);
                 break;
         }
-        
-        // Clear stringbuilder
-        stringBuilder.Clear();
+    }
+
+    private void HandleIncomingSound(string finalRead)
+    {
+        if (storeReads)
+        {
+            // Print value to console
+            TimeSpan timeCode = stopwatch.Elapsed;
+            string elapsedTime = $"{timeCode.Seconds:00}:{timeCode.Milliseconds:00}";
+            Console.WriteLine($"{finalRead} at {elapsedTime}");
+            
+            // Add the sound with time code
+            timeScans.Add((finalRead, timeCode));
+            
+            // Play the scanned sound
+            Sound.PlaySound(finalRead);
+        }
     }
 
     private void PlayScannedSound()
@@ -110,7 +151,6 @@ public class ReadSerialMusic
         
         foreach ((string, TimeSpan) tag in timeScans)
         {
-            
             // Sleeps thread until next sound should play
             Thread.Sleep(tag.Item2 - timeDiff);
             
@@ -118,42 +158,5 @@ public class ReadSerialMusic
             timeDiff = tag.Item2;
         }
         Console.WriteLine("Finished scanned playback\n");
-    }
-
-    public void StartScan()
-    {
-        Console.WriteLine("Scan starting");
-        timeScans.Clear();
-        storeReads = true;
-        var stopwatch = Stopwatch.StartNew();
-        while (stopwatch.Elapsed < TimeSpan.FromSeconds(10))
-        {
-            //Console.WriteLine(stopwatch.Elapsed);
-            //Console.WriteLine("Complete reads: " + completeReads.Count);
-            if (completeReads.Count > 0)
-            {
-                var active = completeReads[0];
-                completeReads.RemoveAt(0);
-                TimeSpan timespan = stopwatch.Elapsed;
-                string elapsedTime = $"{timespan.Seconds:00}:{timespan.Milliseconds:00}";
-                Console.WriteLine($"{active} {elapsedTime}");
-                timeScans.Add((active, timespan));
-            }
-        }
-        
-        stopwatch.Stop();
-        Console.WriteLine("Listing all Items:");
-        foreach ((string, TimeSpan) scan in timeScans)
-        {
-            string elapsedTime = $"{scan.Item2.Seconds:00}:{scan.Item2.Milliseconds:00}";
-            Console.WriteLine(scan.Item1 + " " + elapsedTime);
-        }
-        Console.WriteLine("Scan complete");
-        //Console.WriteLine(timeScans);
-
-        
-        // Start playback thread
-        Thread playbackThread = new Thread(PlayScannedSound);
-        playbackThread.Start();
     }
 }
