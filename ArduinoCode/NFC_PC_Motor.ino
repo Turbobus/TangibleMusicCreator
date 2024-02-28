@@ -1,4 +1,27 @@
 
+// ---------------------------------------------------------- Motor Setup ---------------------------------------
+
+#include <Stepper.h>
+
+// Define constants for stepper motor
+const int stepsPerRevolution = 200;
+const int motorSpeed = 100; // lower speed for clockwise rotation
+const int returnSpeed = 180; // higher speed for counter clockwise rotation
+
+// Define pins
+const int scanButtonPin = 7;
+const int startSwitchPin = 2;
+const int endSwitchPin = 4;
+const int motorPins[] = {8, 9, 10, 11};
+
+// Create instance of Stepper motor
+Stepper myStepper(stepsPerRevolution, motorPins[0], motorPins[1], motorPins[2], motorPins[3]);
+
+// Define variables to track motor state
+bool isMovingClockwise = false;
+bool isMovingCounterClockwise = false;
+
+
 // ----------------------------------------------------------- SPI setup -----------------------------------------
 
 #include <SPI.h>
@@ -40,6 +63,12 @@ void setup(void) {
     sendToComputer("programOn");
   }
 
+  // Motor setups
+  pinMode(scanButtonPin, INPUT_PULLUP);
+  pinMode(startSwitchPin, INPUT_PULLUP);
+  pinMode(endSwitchPin, INPUT_PULLUP);
+
+  // NFC Setups
   setupNFC(HSU1, "HSU_1");
   //setupNFC(HSU2);
   setupNFC(i2c1, "I2C_1");
@@ -49,6 +78,7 @@ void setup(void) {
 }
 
 void loop(void) {
+  scanningController(); // We may need to do this between every sensor read if it is to slow
   readSensor(HSU1);
   activeSensor += 1;
   //readSensor(HSU2);
@@ -89,6 +119,10 @@ void setupNFC(PN532 nfc, String text){
 // --------------------------------------------------------------------------------- Sensor reading --------------------------------------
 
 void readSensor(PN532 nfc){
+  
+  // If the arm is not moving, do not read sensors
+  if(!isMovingClockwise) { return; }
+
   uint8_t success;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
@@ -199,12 +233,65 @@ String extractDataFromPages(uint8_t entries[8 * 4]) {
   return "2";
 }
 
-//void copy(uint8_t* src, uint8_t* dst, int len) {
-  //memcpy(dst, src, sizeof(src[0]) * len);
-//}
+// --------------------------------------------------------------------------- Motor functions -----------------------------------
 
+void scanningController(){
+  // Read the state of the button
+  int buttonState = digitalRead(scanButtonPin);
 
-//---------------------------------------------------------------------------- Printer helpers-----------------------------------
+  // Check if the button is pressed
+  if (buttonState == HIGH) {
+    // Button is pressed, start clockwise movement
+    println("Button is pressed");
+    startClockwise();
+  }
+
+  // Check for limit switch activation
+  if (digitalRead(startSwitchPin) == LOW && isMovingCounterClockwise) {
+    // Limit switch 1 activated, stop motor
+    println("Limit switch pressed"); 
+    stopMotor();
+  } else if (digitalRead(endSwitchPin) == LOW && isMovingClockwise) {
+    // Limit switch 2 activated during clockwise movement, switch to counter clockwise movement
+    println("Limit switch pressed");
+    startCounterClockwise();
+  }
+
+  // Move the motor if it's supposed to be moving
+  if (isMovingClockwise) {
+    myStepper.setSpeed(motorSpeed);
+    myStepper.step(1);
+  } else if (isMovingCounterClockwise) {
+    myStepper.setSpeed(returnSpeed);
+    myStepper.step(-1);
+  }
+}
+
+// Start clockwise movement
+void startClockwise() {
+  isMovingClockwise = true;
+  isMovingCounterClockwise = false;
+  println("Clockwise movement started (Forward)");
+  sendToComputer("start");
+}
+
+// Start counter clockwise movement
+void startCounterClockwise() {
+  isMovingCounterClockwise = true;
+  isMovingClockwise = false;
+  println("Counter clockwise movement started (Back)");
+  sendToComputer("end");
+}
+
+// Stop motor movement
+void stopMotor() {
+  isMovingClockwise = false;
+  isMovingCounterClockwise = false;
+  println("Motor stopped");
+  sendToComputer("play");
+}
+
+//---------------------------------------------------------------------------- Printer helpers -----------------------------------
 
 void sendToComputer(String inputString) {
   // Convert the input string to a character array
