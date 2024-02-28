@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ClCompile Include="ArduinoCode\MultiNFC_Protocol_Read.ino" />
+    <ClCompile Include="ArduinoCode\Multi_NFC_PCPrint.ino" />
     <ClCompile Include="ArduinoCode\NDEF_HSU_Read.ino" />
     <ClCompile Include="ArduinoCode\NFC_Total_Read.ino" />
   </ItemGroup>
