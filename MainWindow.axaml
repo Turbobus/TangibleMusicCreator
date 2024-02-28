@@ -15,6 +15,13 @@
                                 Content="Start Scan"
                         />
                         <Button
+                                Click="EndScan"
+                                Width="100"
+                                Margin="0,20,0,0"
+                                Cursor="Hand"
+                                Content="End Scan"
+                        />
+                        <Button
                                 Click="PlaySampleSound"
                                 Width="100"
                                 Margin="0,20,0,0"
