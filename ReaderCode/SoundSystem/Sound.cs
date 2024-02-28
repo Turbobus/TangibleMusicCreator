@@ -72,7 +72,6 @@ public static class Sound
 
     private static bool MacCheck()
     {
-        Console.WriteLine(Path.DirectorySeparatorChar.ToString() != "\\");
         return Path.DirectorySeparatorChar.ToString() != "\\";
     }
 }
