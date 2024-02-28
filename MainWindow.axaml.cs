@@ -16,7 +16,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
-        //Sound.SetupSound();
+        Sound.SetupSound();
 
         // Redirect the Console.Out to a custom TextWriter
         originalConsoleOut = Console.Out;
