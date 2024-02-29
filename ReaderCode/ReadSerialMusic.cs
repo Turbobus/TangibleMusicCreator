@@ -102,6 +102,7 @@ public class ReadSerialMusic
                 storeReads = false;
                 break;
             case "start":
+                if (storeReads) { break; } // Break if we already have started
                 // Start stopwatch and clear timeScans
                 stopwatch.Start();
                 timeScans.Clear();
