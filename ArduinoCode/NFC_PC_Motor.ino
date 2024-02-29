@@ -52,6 +52,8 @@ PN532 i2c1(pn532i2c);
 int activeSensor = 0;
 uint8_t latestUids[3][7];
 
+const int playBackButton = 6;
+
 // ------------------------------------------------------ Arduino standard functions ------------------------------
 
 void setup(void) {
@@ -67,6 +69,9 @@ void setup(void) {
   pinMode(scanButtonPin, INPUT_PULLUP);
   pinMode(startSwitchPin, INPUT_PULLUP);
   pinMode(endSwitchPin, INPUT_PULLUP);
+
+  // Other setup
+  pinMode(playBackButton, INPUT_PULLUP);
 
   // NFC Setups
   setupNFC(HSU1, "HSU_1");
@@ -88,6 +93,9 @@ void loop(void) {
   stepMotor(3);
   readSensor(SPI1);
   activeSensor = 0;
+
+  // Checks if the user wants to start playback of sound
+  checkPlayback();
 }
 
 
@@ -330,7 +338,13 @@ void println(String text){
   }
 }
 
+// -------------------------------------------------------------------------------------- Helper functions -------------------------
 
+void checkPlayback(){
+  if (!isMovingClockwise && !isMovingCounterClockwise && digitalRead(playBackButton) == HIGH){
+    sendToComputer("play");
+  }
+}
 
 // -------------------------------------------------------------------------------------- Mifare Classic ----------------------------
 
