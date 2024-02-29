@@ -47,7 +47,7 @@ PN532 i2c1(pn532i2c);
 
 // ----------------------------------------------------------- Variables -----------------------------------------
 
-#define debug false
+#define debug true
 #define multiRead false
 int activeSensor = 0;
 uint8_t latestUids[3][7];
@@ -78,12 +78,14 @@ void setup(void) {
 }
 
 void loop(void) {
-  scanningController(); // We may need to do this between every sensor read if it is to slow
+  stepMotor(3); // We may need to do this between every sensor read if it is to slow
   readSensor(HSU1);
   activeSensor += 1;
   //readSensor(HSU2);
+  stepMotor(3);
   readSensor(i2c1);
   activeSensor += 1;
+  stepMotor(3);
   readSensor(SPI1);
   activeSensor = 0;
 }
@@ -235,6 +237,12 @@ String extractDataFromPages(uint8_t entries[8 * 4]) {
 
 // --------------------------------------------------------------------------- Motor functions -----------------------------------
 
+void stepMotor(int stepps){
+  for (int i = 0; i < stepps; i++){
+    scanningController();
+  }
+}
+
 void scanningController(){
   // Read the state of the button
   int buttonState = digitalRead(scanButtonPin);
@@ -260,7 +268,7 @@ void scanningController(){
   // Move the motor if it's supposed to be moving
   if (isMovingClockwise) {
     myStepper.setSpeed(motorSpeed);
-    myStepper.step(1);
+    myStepper.step(5);
   } else if (isMovingCounterClockwise) {
     myStepper.setSpeed(returnSpeed);
     myStepper.step(-1);
