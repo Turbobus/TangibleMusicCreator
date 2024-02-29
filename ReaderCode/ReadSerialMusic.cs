@@ -21,6 +21,9 @@ public class ReadSerialMusic
     private readonly Stopwatch stopwatch = new Stopwatch();
     private readonly List<(string,TimeSpan)> timeScans = new List<(string,TimeSpan)>();
     
+    // Playback helper
+    private bool isPlaying = false;
+    
     /// <summary>
     /// Starts music program on given serial port
     /// </summary>
@@ -114,8 +117,10 @@ public class ReadSerialMusic
                 storeReads = false;
                 break;
             case "play":
+                if (isPlaying) { break; } // If we are already playing, break
                 // Start a playback thread
                 Thread playbackThread = new Thread(PlayScannedSound);
+                isPlaying = true;
                 playbackThread.Start();
                 break;
             case "error":
@@ -158,6 +163,8 @@ public class ReadSerialMusic
             Sound.PlaySound(tag.Item1);
             timeDiff = tag.Item2;
         }
+
+        isPlaying = false;
         Console.WriteLine("Finished scanned playback\n");
     }
 }
