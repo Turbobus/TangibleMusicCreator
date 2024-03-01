@@ -37,13 +37,17 @@ PN532_HSU pn532hsu1(Serial1);
 PN532 HSU1(pn532hsu1);
 PN532_HSU pn532hsu2(Serial2);
 PN532 HSU2(pn532hsu2);
+PN532_HSU pn532hsu3(Serial3);
+PN532 HSU3(pn532hsu3);
 
 // ----------------------------------------------------------- I2C setup -----------------------------------------
 
 #include <Wire.h>
 #include <PN532_I2C.h>
-PN532_I2C pn532i2c(Wire1);
+PN532_I2C pn532i2c(Wire);
 PN532 i2c1(pn532i2c);	
+PN532_I2C pn532i2c2(Wire1);
+PN532 i2c2(pn532i2c2);	
 
 // ----------------------------------------------------------- Variables -----------------------------------------
 
@@ -75,23 +79,38 @@ void setup(void) {
 
   // NFC Setups
   setupNFC(HSU1, "HSU_1");
-  //setupNFC(HSU2);
+  setupNFC(HSU2, "HSU_2");
+  setupNFC(HSU3, "HSU_3");
   setupNFC(i2c1, "I2C_1");
+  setupNFC(i2c2, "I2C_2");
   setupNFC(SPI1, "SPI_1");
 
   println("Ready To Read");
 }
 
 void loop(void) {
-  stepMotor(3); // We may need to do this between every sensor read if it is to slow
   readSensor(HSU1);
+  stepMotor(3); 
   activeSensor += 1;
-  //readSensor(HSU2);
+
+  readSensor(HSU2);
   stepMotor(3);
+  activeSensor += 1;
+
+  readSensor(HSU3);
+  stepMotor(3);
+  activeSensor += 1;
+
   readSensor(i2c1);
-  activeSensor += 1;
   stepMotor(3);
+  activeSensor += 1;
+
+  readSensor(i2c2);
+  stepMotor(3);
+  activeSensor += 1;
+  
   readSensor(SPI1);
+    stepMotor(3);
   activeSensor = 0;
 
   // Checks if the user wants to start playback of sound
