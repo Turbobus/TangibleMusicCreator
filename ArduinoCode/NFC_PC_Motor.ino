@@ -256,7 +256,7 @@ void scanningController(){
   int buttonState = digitalRead(scanButtonPin);
 
   // Check if the button is pressed
-  if (buttonState == HIGH) {
+  if (buttonState == LOW) {
     // Button is pressed, start clockwise movement
     println("Button is pressed");
     startClockwise();
