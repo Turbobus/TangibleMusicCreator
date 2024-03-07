@@ -4,6 +4,7 @@ using System.IO.Ports;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 
@@ -127,32 +128,31 @@ public class SimpleSerialRead
         }
         Console.WriteLine("Scan complete");
         //Console.WriteLine(timeScans);
+        PaceTimeScans(1.0/16.0);
     }
 
-    private void PaceTimeScans(int tempo)
+    private void PaceTimeScans(double tempo)
     {
+        Console.WriteLine("Start Pace");
+        List<(string, TimeSpan)> newList = new List<(string,TimeSpan)>();
         int index = 0;
         foreach ((string, TimeSpan) scan in timeScans)
         {
-            double fraction = 1.0 / tempo;
-            double seconds = scan.Item2.TotalSeconds;
-            double milliseconds = scan.Item2.TotalMilliseconds;
-            double rest = milliseconds % fraction;
-
-            // Calculate the adjusted milliseconds based on the closest tempo
-            double adjustedMilliseconds;
-            if (rest < fraction / 2)
-            {
-                adjustedMilliseconds = milliseconds - rest;
-            }
-            else
-            {
-                adjustedMilliseconds = milliseconds + (fraction - rest);
-            }
+            double mili = scan.Item2.Milliseconds / 1000.0;
+            double fraction = mili / tempo;
+            int rounded = (int)Math.Round(fraction);
+            Console.WriteLine("Org: " + mili + ", Rounded: " + rounded + ", Tempo: " + tempo );
             
             TimeSpan newTimeSpan = 
-                TimeSpan.FromSeconds(scan.Item2.TotalSeconds + TimeSpan.FromMilliseconds(adjustedMilliseconds);
-            timeScans[index] = (scan.Item1, newTimeSpan);
+                new TimeSpan(0, 0, 0, (int)scan.Item2.TotalSeconds, (int)(rounded*tempo*10000));
+            newList.Add((scan.Item1, newTimeSpan));
+            index++;
+        }
+        
+        foreach ((string, TimeSpan) scan in newList)
+        {
+            string elapsedTime = $"{scan.Item2.Seconds:00}:{scan.Item2.Milliseconds:00}";
+            Console.WriteLine(scan.Item1 + " " + elapsedTime);
         }
     }
 }
