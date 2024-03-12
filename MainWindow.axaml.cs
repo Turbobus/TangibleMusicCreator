@@ -58,4 +58,9 @@ public partial class MainWindow : Window
     {
         readSerialMusic.DecodeCommand("play");
     }
+    
+    private void SimulateSound(object sender, RoutedEventArgs args)
+    {
+        readSerialMusic.DecodeCommand("toggle.mp3");
+    }
 }
