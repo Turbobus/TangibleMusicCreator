@@ -101,12 +101,13 @@ public class ReadSerialMusic
         switch(finalRead) 
         {
             case "programOn":
+                Sound.PlaySound("startUp.mp3");
                 stopwatch.Reset();
                 timeScans.Clear();
                 storeReads = false;
                 break;
             case "start":
-                if (storeReads) { break; } // Break if we already have started
+                if (storeReads || isPlaying) { break; } // Break if we already have started
                 // Start stopwatch and clear timeScans
                 stopwatch.Start();
                 timeScans.Clear();
@@ -118,7 +119,7 @@ public class ReadSerialMusic
                 storeReads = false;
                 break;
             case "play":
-                if (isPlaying) { break; } // If we are already playing, break
+                if (isPlaying || storeReads) { break; } // If we are already playing, break
                 // Start a playback thread
                 Thread playbackThread = new Thread(PlayScannedSound);
                 isPlaying = true;
@@ -136,7 +137,7 @@ public class ReadSerialMusic
 
     private void HandleIncomingSound(string finalRead)
     {
-        if (storeReads)
+        if (storeReads && !isPlaying)
         {
             // Print value to console
             TimeSpan timeCode = stopwatch.Elapsed;
@@ -147,7 +148,7 @@ public class ReadSerialMusic
             timeScans.Add((finalRead, timeCode));
             
             // Play the scanned sound
-            Sound.PlaySound(finalRead);
+            //Sound.PlaySound(finalRead);
         }
     }
 
